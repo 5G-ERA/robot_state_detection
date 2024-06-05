@@ -1,0 +1,40 @@
+#1
+run
+simulator
+#2
+run 
+tools.py from ros2_ws/src 5gera
+#3
+run 
+ros2 run era_5g_network_signal_mapper_ros2 current_color (do not move robot)
+#4
+run 
+ros2 service call /load_and_publish_pointcloud std_srvs/Trigger "{}"
+#5
+rviz subscribe to /loaded_pointcloud
+#6
+run
+ros2 service call /load_and_publish_pointcloud std_srvs/Trigger "{}"
+#7
+
+
+action_plan_id= 794a9720-5a1d-40a8-8ff9-6ecf3beebaeb#retreive all the time
+action_id=d3c41ddc-d231-4b6c-ad1a-59bc4c435ad4 # constant
+destination= MiddlewareLutonWorkstationTwo
+destination_type= Edge
+bearer=eyJhbGciOiJ
+
+
+source ~/ros2_ws/install/setup.bash
+ros2 service call /edge_switchover pcl_interfaces/srv/EdgeSwitchover "{action_plan_id: d9237548-35a2-458d-a999-8c82da5e1d70,action_id: d3c41ddc-d231-4b6c-ad1a-59bc4c435ad4,destination: MiddlewareLutonWorkstationTwo, destination_type: Edge, bearer: eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWQyMGYyNTQtZGMzYi00MDZkLTlmMTUtYjczY2NkNDdlODY3IiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiYWRtaW4iLCJqdGkiOiI5Y2JhMGNmYS1kMWMwLTQxMzAtYjk3ZC00MTY2ODk0MmE5NTQiLCJleHAiOjE3MTI4NjQ0MTIsImlzcyI6InJlZGlzaW50ZXJmYWNlSXNzdWVyIiwiYXVkIjoicmVkaXNpbnRlcmZhY2VBdWRpZW5jZSJ9.k1B9BA8YAsTihxN_hzUVowGzm3dL47N5ce1SFCbCKIQ}"
+
+~/ros2_ws/src$ python3 switchover_service.py
+
+~/ros2_ws/src/era_5g_network_signal_mapper_ros2/era_5g_network_signal_mapper_ros2$ python3 auto_switchover_action.py 
+
+auto switch over when changing colour
+vlad@m:~/ros2_ws/src/era_5g_network_signal_mapper_ros2/era_5g_network_signal_mapper_ros2$ source ~/ros2_ws/install/setup.bash
+vlad@m:~/ros2_ws/src/era_5g_network_signal_mapper_ros2/era_5g_network_signal_mapper_ros2$ python3 auto_switchover_action.py
+
+random navigation
+~/command_sqm/random_exploration/not_so_random$ python3 adapt.py
