@@ -1,0 +1,49 @@
+version: '3'
+
+services:
+
+  object_detector:
+    image: but5gera/ros2_object_detection:0.3.0
+    environment:
+      ROS_DOMAIN_ID: 34
+      INPUT_TOPIC: /image_raw 
+      OUTPUT_TOPIC: /res 
+      NETAPP_TORCH_DEVICE: cpu
+      #NETAPP_MODEL_VARIANT: yolov3_mobilenet
+      NETAPP_MODEL_VARIANT: yolo_dark_net2
+      #NETAPP_MODEL_VARIANT: mask_rcnn_r50
+    network_mode: host
+
+  visualizer_node:
+    build: ./../nodes
+    command: python3 /root/detection_publisher.py
+    volumes:
+      - ./../nodes/:/root
+    environment:
+      ROS_DOMAIN_ID: 34
+      DRAW_PERSONS_ONLY: true  # show "person" class only
+      INPUT_IMAGES: /image_raw_x
+      OUTPUT_IMAGES: /bounding_boxes
+      RESULTS: /res_x
+    network_mode: host
+    ipc: host
+  
+  decompression_node:
+    build: ./../nodes
+    command: python3 /root/uncompressor.py
+    volumes: 
+      - ./../nodes/:/root
+    environment:
+      ROS_DOMAIN_ID: 34
+    network_mode: host
+    ipc: host
+
+#  bbow_visualizer:
+#    image: but5gera/ros2_detection_publisher:1.0.0
+#    environment:
+#      ROS_DOMAIN_ID: 34
+#      INPUT_IMAGES: /image_raw
+#      OUTPUT_IMAGES: /bounding_boxes
+#      RESULTS: /res
+#    network_mode: host
+
