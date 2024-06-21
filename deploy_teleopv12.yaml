@@ -1,0 +1,64 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: wings-teleoperation-v3
+spec:
+  type: NodePort
+  selector:
+    app: wings-teleoperation-v3
+  ports:
+    - protocol: TCP
+      port: 5000
+      name: teleopv11
+      targetPort: 5000
+      nodePort: 31011
+    - protocol: TCP
+      port: 80
+      name: relay-server
+      targetPort: 80
+      nodePort: 31012
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wings-teleoperation-v3
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wings-teleoperation-v3
+  template:
+    metadata:
+      labels:
+        app: wings-teleoperation-v3
+    spec:
+      nodeSelector:
+        kubernetes.io/os: linux
+      containers:
+        - name: wings-teleoperation-v3
+          image: ghcr.io/5g-era/wings-teleoperation-v3:latest
+          imagePullPolicy: Always
+          resources: {}
+        - name: relay-server
+          image: but5gera/ros2_relay_server:1.6.0
+          imagePullPolicy: Always
+          resources: {}
+          env:                                                                                                                                                                                             
+            - name: TOPIC_LIST
+              value: '[{"name":"/robot/robotnik_base_control/cmd_vel_unstamped","type":"geometry_msgs/msg/Twist"}]'
+            - name: TOPIC_TO_PUB_LIST
+              value: '[{"name":"/robot/robotnik_base_control/odom","type":"nav_msgs/msg/Odometry"},{"name":"image_raw","type":"sensor_msgs/msg/Image"}]'
+            - name: TOPICS_TO_CLIENT
+              value: '[{"name":"/robot/robotnik_base_control/cmd_vel_unstamped","type":"geometry_msgs/msg/Twist"}]'
+            - name: TOPICS_FROM_CLIENT
+              value: '[{"name":"/robot/robotnik_base_control/odom","type":"nav_msgs/msg/Odometry"},{"name":"/image_raw","type":"sensor_msgs/msg/Image"}]'
+            - name: SERVICES_FROM_CLIENT
+              value: '[]'
+            - name: TRANSFORMS_TO_CLIENT
+              value: '[]'
+            - name: ACTIONS_FROM_CLIENT
+              value: '[]'
+            - name: NETAPP_PORT
+              value: "80"
+
+

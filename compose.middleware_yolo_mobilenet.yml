@@ -1,0 +1,59 @@
+version: '3'
+
+services:
+
+#  bbow_visualizer:
+#    image: but5gera/ros2_detection_publisher:1.0.0
+#    environment:
+#      ROS_DOMAIN_ID: 34
+#      INPUT_IMAGES: /image_raw
+#      OUTPUT_IMAGES: /bounding_boxes
+#      RESULTS: /res
+#    network_mode: host
+
+  decompression_node:
+    build: ./../nodes
+    command: python3 /root/uncompressor.py
+    volumes:
+      - ./../nodes/:/root
+    environment:
+      ROS_DOMAIN_ID: 34
+    network_mode: host
+    ipc: host
+
+  visualizer_node:
+    build: ./../nodes
+    command: python3 /root/detection_publisher.py
+    volumes:
+      - ./../nodes/:/root
+    environment:
+      ROS_DOMAIN_ID: 34
+      DRAW_PERSONS_ONLY: true  # show "person" class only
+      INPUT_IMAGES: /image_raw_x
+      OUTPUT_IMAGES: /bounding_boxes
+      RESULTS: /res_x
+    network_mode: host
+    ipc: host
+
+
+  ros2_relay_client:
+    image: but5gera/ros2_relay_client:1.5.0
+    environment:
+      SEND_CLOCK: True
+      ROS_DOMAIN_ID: 34
+      USE_MIDDLEWARE: true
+#      NETAPP_ADDRESS: http://192.168.60.211:5896
+      MIDDLEWARE_ADDRESS: 192.168.60.211
+#      MIDDLEWARE_ADDRESS: middleware.5gera.robotnik.cloud
+      MIDDLEWARE_USER: ad20f254-dc3b-406d-9f15-b73ccd47e867
+      MIDDLEWARE_PASSWORD: middleware
+      MIDDLEWARE_TASK_ID: 4b92d129-7cf1-4938-8668-9f039f809c33
+      MIDDLEWARE_ROBOT_ID: 300c719a-1c06-4500-a13a-c2e20592b273
+      TOPICS_TO_SERVER: '[{ "name": "/image_raw", "type": "sensor_msgs/msg/Image", "compression": "h264"}]'
+      TOPICS_FROM_SERVER: '[{ "name": "/res", "type": "std_msgs/msg/String"}]'
+
+    ports:
+      -  "5896:5896"
+    network_mode: host
+    ipc: host
+
